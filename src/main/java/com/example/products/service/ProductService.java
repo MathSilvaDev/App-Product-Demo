@@ -3,6 +3,7 @@ package com.example.products.service;
 import com.example.products.dto.request.ProductRequestDTO;
 import com.example.products.dto.response.ProductResponseDTO;
 import com.example.products.entities.Product;
+import com.example.products.exception.NotFindByIdException;
 import com.example.products.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,7 @@ public class ProductService {
     private Product getProductById(Long id) {
         return productRepository
                 .findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(NotFindByIdException::new);
     }
 
     private ProductResponseDTO toResponseDTO(Product product){
