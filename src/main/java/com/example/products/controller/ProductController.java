@@ -2,6 +2,7 @@ package com.example.products.controller;
 
 import com.example.products.entities.Product;
 import com.example.products.repository.ProductRepository;
+import com.example.products.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,51 +14,42 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductService productService;
 
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product){
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(productRepository.save(product));
+    public ProductController(ProductService productService){
+        this.productService = productService;
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts(){
         return ResponseEntity
-                .ok(productRepository.findAll());
+                .ok(productService.findAllProducts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> findProductById(@PathVariable Long id){
         return ResponseEntity
-                .ok(productRepository
-                        .findById(id)
-                        .orElseThrow(RuntimeException::new));
+                .ok(productService.findProductById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(productService.createProduct(product));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> editProductById(@PathVariable Long id,
-                                                   @RequestBody Product newProduct){
-
-        Product product = productRepository
-                .findById(id)
-                .orElseThrow(RuntimeException::new);
-
-        product.setName(newProduct.getName());
-        product.setPrice(newProduct.getPrice());
-        product.setQuantity(newProduct.getQuantity());
-
+                                                   @RequestBody Product product){
         return ResponseEntity
-                .ok(productRepository.save(product));
+                .ok(productService.editProductById(id, product));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProductById(@PathVariable Long id){
-        productRepository.findById(id).orElseThrow(RuntimeException::new);
+        productService.deleteProductById(id);
 
-        productRepository.deleteById(id);
         return ResponseEntity
                 .noContent()
                 .build();
