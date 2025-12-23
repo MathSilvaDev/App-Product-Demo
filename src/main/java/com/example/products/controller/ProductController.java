@@ -3,6 +3,7 @@ package com.example.products.controller;
 import com.example.products.dto.request.ProductRequestDTO;
 import com.example.products.dto.response.ProductResponseDTO;
 import com.example.products.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRequestDTO productDTO){
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productDTO){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(productService.createProduct(productDTO));
@@ -40,7 +41,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> editProductById(@PathVariable Long id,
-                                                   @RequestBody ProductRequestDTO productDTO){
+                                                              @Valid @RequestBody ProductRequestDTO productDTO){
         return ResponseEntity
                 .ok(productService.editProductById(id, productDTO));
     }
