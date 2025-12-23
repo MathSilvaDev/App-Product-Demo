@@ -1,8 +1,11 @@
 package com.example.products.service;
 
+import com.example.products.dto.request.ProductRequestDTO;
+import com.example.products.dto.response.ProductResponseDTO;
 import com.example.products.entities.Product;
 import com.example.products.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,37 +18,60 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAllProducts(){
-        return productRepository.findAll();
+    //GET ALL
+    public List<ProductResponseDTO> findAllProducts(){
+        return productRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public Product findProductById(Long id){
+    //GET BY ID
+    public ProductResponseDTO findProductById(Long id){
+        Product product = getProductById(id);
+        return toResponseDTO(product);
+    }
+
+    //POST
+    public ProductResponseDTO createProduct(ProductRequestDTO dto){
+        Product product = new Product(
+                dto.getName(),
+                dto.getPrice(),
+                dto.getQuantity()
+        );
+
+        productRepository.save(product);
+        return toResponseDTO(product);
+    }
+
+    //PUT
+    @Transactional
+    public ProductResponseDTO editProductById(Long id, ProductRequestDTO dto){
+        Product product = getProductById(id);
+        product.update(dto);
+
+        return toResponseDTO(product);
+    }
+
+    //DELETE
+    public void deleteProductById(Long id){
+        getProductById(id);
+        productRepository.deleteById(id);
+    }
+
+    //ADDITIONAL METHODS
+    private Product getProductById(Long id) {
         return productRepository
                 .findById(id)
                 .orElseThrow(RuntimeException::new);
     }
 
-    public Product createProduct(Product product){
-        return productRepository.save(product);
-    }
-
-    public Product editProductById(Long id, Product newProduct){
-        Product product = productRepository
-                .findById(id)
-                .orElseThrow(RuntimeException::new);
-
-        product.setName(newProduct.getName());
-        product.setPrice(newProduct.getPrice());
-        product.setQuantity(newProduct.getQuantity());
-
-        return productRepository.save(product);
-    }
-
-    public void deleteProductById(Long id){
-        productRepository
-                .findById(id)
-                .orElseThrow(RuntimeException::new);
-
-        productRepository.deleteById(id);
+    private ProductResponseDTO toResponseDTO(Product product){
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getQuantity()
+        );
     }
 }

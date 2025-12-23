@@ -1,5 +1,6 @@
 package com.example.products.entities;
 
+import com.example.products.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,4 +23,16 @@ public class Product {
     private Double price;
 
     private Integer quantity;
+
+    public Product(String name, Double price, Integer quantity){
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public void update(ProductRequestDTO dto){
+        this.name = dto.getName();
+        this.price = dto.getPrice();
+        this.quantity = dto.getQuantity();
+    }
 }
