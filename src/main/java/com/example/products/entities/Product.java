@@ -6,6 +6,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_product")
@@ -15,8 +19,8 @@ import lombok.Setter;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(length = 15, nullable = false)
     private String name;
@@ -24,6 +28,9 @@ public class Product {
     private Double price;
     
     private Integer quantity;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public Product(String name, Double price, Integer quantity){
         this.name = name;

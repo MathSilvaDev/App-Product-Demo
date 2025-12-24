@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -28,7 +29,7 @@ public class ProductService {
     }
 
     //GET BY ID
-    public ProductResponseDTO findProductById(Long id){
+    public ProductResponseDTO findProductById(UUID id){
         Product product = getProductById(id);
         return toResponseDTO(product);
     }
@@ -47,7 +48,7 @@ public class ProductService {
 
     //PUT
     @Transactional
-    public ProductResponseDTO editProductById(Long id, ProductRequestDTO dto){
+    public ProductResponseDTO editProductById(UUID id, ProductRequestDTO dto){
         Product product = getProductById(id);
         product.update(dto);
 
@@ -55,13 +56,13 @@ public class ProductService {
     }
 
     //DELETE
-    public void deleteProductById(Long id){
+    public void deleteProductById(UUID id){
         getProductById(id);
         productRepository.deleteById(id);
     }
 
     //ADDITIONAL METHODS
-    private Product getProductById(Long id) {
+    private Product getProductById(UUID id) {
         return productRepository
                 .findById(id)
                 .orElseThrow(NotFindByIdException::new);
@@ -72,7 +73,8 @@ public class ProductService {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                product.getQuantity()
+                product.getQuantity(),
+                product.getCreatedAt()
         );
     }
 }
