@@ -30,6 +30,7 @@ public class Product {
     private Integer quantity;
 
     @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Product(String name, Double price, Integer quantity){
